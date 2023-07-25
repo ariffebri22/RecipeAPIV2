@@ -1,11 +1,20 @@
 const Pool = require("../config/db");
-const { getUsers, getUsersAll, getUsersCount, getUsersById, deleteUsersById, postUsers, putUsers, getLogin, checkUsernameAvailability } = require("../model/UsersModel");
+const { getUsers, getUsersAll, getUsersCount, getUsersById, deleteUsersById, postUsers, putUsers, getLogin, checkUsernameAvailability, checkEmailAvailability } = require("../model/UsersModel");
 const { hash, verify } = require("../helper/passwordHash");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const argon2 = require("argon2");
+const nodemailer = require("nodemailer");
 
 const secretKey = process.env.SECRET_KEY;
+
+const transporter = nodemailer.createTransport({
+    service: "Gmail",
+    auth: {
+        user: process.env.EMAIL, // Ganti dengan alamat email Anda
+        pass: process.env.PASS, // Ganti dengan password email Anda
+    },
+});
 
 const UsersController = {
     getDataDetail: async (req, res, next) => {
@@ -237,7 +246,23 @@ const UsersController = {
                     if (isPasswordValid) {
                         const token = jwt.sign({ username: username, users_Id: dataUsers.rows[0].id, type: dataUsers.rows[0].type }, secretKey);
 
-                        return res.status(200).json({ status: 200, message: `Login successful`, say: `Hallo ${username}!`, token });
+                        const mailOptions = {
+                            from: process.env.EMAIL, // Alamat email pengirim
+                            to: dataUsers.rows[0].email, // Alamat email penerima
+                            subject: "Verify your Account", // Subjek email
+                            text: `Halo ${username}, please verify your account with this token : ${token}`, // Isi email dalam plain text
+                            html: "<b>Halo,</b><br><p>please verify your account.</p>", // Isi email dalam format HTML
+                        };
+
+                        transporter.sendMail(mailOptions, (error, info) => {
+                            if (error) {
+                                console.log("Gagal mengirim email: ", error);
+                            } else {
+                                console.log("Email terkirim: ", info.response);
+                            }
+                        });
+
+                        return res.status(200).json({ status: 200, message: `Login successful`, say: `Hallo ${username}!`, token: `Please check your email for get token` });
                     } else {
                         return res.status(401).json({ status: 401, message: "Invalid password" });
                     }

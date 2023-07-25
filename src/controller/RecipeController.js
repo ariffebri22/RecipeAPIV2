@@ -1,6 +1,4 @@
 const xss = require("xss");
-const cloudinary = require("../config/cloud");
-const multer = require("multer");
 const { getRecipe, getRecipeById, deleteById, postRecipe, putRecipe, getRecipeAll, getRecipeCount } = require("../model/RecipeModel");
 
 const RecipeController = {
@@ -156,7 +154,7 @@ const RecipeController = {
 
             const dataRecipeId = await getRecipeById(parseInt(id));
 
-            const imageUrl = req.file ? req.file.path : dataRecipeId.rows[0].photo;
+            // const imageUrl = req.file.path;
             const users_id = req.payload.users_Id;
             const type = req.payload.type;
 
@@ -174,7 +172,7 @@ const RecipeController = {
                 title: xss(title) || dataRecipeId.rows[0].title,
                 ingredients: xss(ingredients) || dataRecipeId.rows[0].ingredients,
                 category_id: parseInt(category_id) || dataRecipeId.rows[0].category_id,
-                photo: imageUrl || dataRecipeId.rows[0].photo,
+                // photo: imageUrl || dataRecipeId.rows[0].photo,
             };
 
             const result = await putRecipe(data, id);

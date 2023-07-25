@@ -77,6 +77,12 @@ const CategoryController = {
                 return res.status(404).json({ message: "id wrong" });
             }
 
+            const type = req.payload.type;
+
+            if (type !== "admin") {
+                return res.status(403).json({ status: 403, message: "You not admin" });
+            }
+
             let result = await deleteCategoryById(parseInt(id));
             console.log(result);
             if (result.rowCount == 0) {
@@ -96,6 +102,13 @@ const CategoryController = {
             if (!name || !description) {
                 return res.status(400).json({ status: 400, message: "input name category required" });
             }
+
+            const type = req.payload.type;
+
+            if (type !== "admin") {
+                return res.status(403).json({ status: 403, message: "You not admin" });
+            }
+
             let data = {
                 name: name,
                 description: description,
@@ -118,6 +131,12 @@ const CategoryController = {
 
             if (!id || id <= 0 || isNaN(id)) {
                 return res.status(404).json({ message: "id wrong" });
+            }
+
+            const type = req.payload.type;
+
+            if (type !== "admin") {
+                return res.status(403).json({ status: 403, message: "You not admin" });
             }
 
             let dataCategoryId = await getCategoryById(parseInt(id));

@@ -4,13 +4,18 @@ const { hash, verify } = require("../helper/passwordHash");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const argon2 = require("argon2");
-const { GenerateToken } = require("../helper/generateToken");
 
 const secretKey = process.env.SECRET_KEY;
 
 const UsersController = {
     getDataDetail: async (req, res, next) => {
         try {
+            const type = req.payload.type;
+
+            if (type !== "admin") {
+                return res.status(403).json({ status: 403, message: "You not admin" });
+            }
+
             const { search, searchBy, sort, limit } = req.query;
 
             let page = req.query.page || 1;
@@ -46,6 +51,11 @@ const UsersController = {
     },
     getData: async (req, res, next) => {
         try {
+            const type = req.payload.type;
+
+            if (type !== "admin") {
+                return res.status(403).json({ status: 403, message: "You not admin" });
+            }
             const dataUsers = await getUsersAll();
             console.log("dataUsers");
             console.log(dataUsers);
@@ -61,6 +71,12 @@ const UsersController = {
 
             if (!id || id <= 0 || isNaN(id)) {
                 return res.status(404).json({ message: "id wrong" });
+            }
+
+            const type = req.payload.type;
+
+            if (type !== "admin") {
+                return res.status(403).json({ status: 403, message: "You not admin" });
             }
 
             const dataUsersId = await getUsersById(parseInt(id));
@@ -85,6 +101,18 @@ const UsersController = {
             if (!id || id <= 0 || isNaN(id)) {
                 return res.status(404).json({ message: "id wrong" });
             }
+
+            // const dataUsersId = await getUsersById(parseInt(id));
+
+            // const users_id = req.payload.users_Id;
+            // const type = req.payload.type;
+
+            // console.log("id data");
+            // console.log(users_id);
+            // console.log(dataUsersId.rows[0].users_id);
+            // if (users_id !== dataUsersId.rows[0].users_id && type !== "admin") {
+            //     return res.status(403).json({ status: 403, message: "Recipe does not belong to you" });
+            // }
 
             const result = await deleteUsersById(parseInt(id));
             console.log(result);
@@ -149,6 +177,16 @@ const UsersController = {
 
             const dataUsersId = await getUsersById(parseInt(id));
 
+            const users_id = req.payload.users_Id;
+            const type = req.payload.type;
+
+            console.log("id data");
+            console.log(users_id);
+            console.log(dataUsersId.rows[0].users_id);
+            if (users_id !== dataUsersId.rows[0].users_id && type !== "admin") {
+                return res.status(403).json({ status: 403, message: "Recipe does not belong to you" });
+            }
+
             console.log("put data");
             console.log(dataUsersId.rows[0]);
 
@@ -193,7 +231,7 @@ const UsersController = {
                 if (typeof storedPassword === "string" && typeof password === "string") {
                     const isPasswordValid = await verify(storedPassword, password);
                     if (isPasswordValid) {
-                        const token = jwt.sign({ username: username, users_Id: dataUsers.rows[0].id }, secretKey);
+                        const token = jwt.sign({ username: username, users_Id: dataUsers.rows[0].id, type: dataUsers.rows[0].type }, secretKey);
 
                         return res.status(200).json({ status: 200, message: `Login successful`, say: `Hallo ${username}!`, token });
                     } else {

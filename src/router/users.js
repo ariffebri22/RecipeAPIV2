@@ -1,13 +1,14 @@
 const express = require("express");
 const router = express.Router();
 const { getData, getDataById, deleteDataById, postData, putData, getDataDetail, login } = require("../controller/UsersController");
+const { Protect } = require("./../middleware/Protect");
 
-router.get("/", getData);
-router.get("/detail", getDataDetail);
+router.get("/", Protect, getData);
+router.get("/detail", Protect, getDataDetail);
 router.get("/login", login);
 router.post("/", postData);
-router.put("/:id", putData);
-router.get("/:id", getDataById);
-router.delete("/:id", deleteDataById);
+router.put("/:id", Protect, putData);
+router.get("/:id", Protect, getDataById);
+router.delete("/:id", Protect, deleteDataById);
 
 module.exports = router;

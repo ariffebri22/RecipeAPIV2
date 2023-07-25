@@ -91,11 +91,12 @@ const RecipeController = {
             const dataRecipeId = await getRecipeById(parseInt(id));
 
             const users_id = req.payload.users_Id;
+            const type = req.payload.type;
 
             console.log("id data");
             console.log(users_id);
             console.log(dataRecipeId.rows[0].users_id);
-            if (users_id !== dataRecipeId.rows[0].users_id) {
+            if (users_id !== dataRecipeId.rows[0].users_id && type !== "admin") {
                 return res.status(403).json({ status: 403, message: "Recipe does not belong to you" });
             }
 
@@ -156,11 +157,12 @@ const RecipeController = {
             const dataRecipeId = await getRecipeById(parseInt(id));
 
             const users_id = req.payload.users_Id;
+            const type = req.payload.type;
 
             console.log("id data");
             console.log(users_id);
             console.log(dataRecipeId.rows[0].users_id);
-            if (users_id !== dataRecipeId.rows[0].users_id) {
+            if (users_id !== dataRecipeId.rows[0].users_id && type !== "admin") {
                 return res.status(403).json({ status: 403, message: "Recipe does not belong to you" });
             }
 

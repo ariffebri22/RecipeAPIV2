@@ -131,6 +131,18 @@ const checkUsernameAvailability = async (username) => {
     }
 };
 
+const checkEmailAvailability = async (email) => {
+    try {
+        const queryString = "SELECT * FROM users WHERE email = $1";
+        const values = [email];
+        const result = await Pool.query(queryString, values);
+        return result.rows.length === 0;
+    } catch (err) {
+        console.error(err);
+        throw err;
+    }
+};
+
 module.exports = {
     getUsers,
     getUsersAll,
@@ -141,4 +153,5 @@ module.exports = {
     putUsers,
     getLogin,
     checkUsernameAvailability,
+    checkEmailAvailability,
 };

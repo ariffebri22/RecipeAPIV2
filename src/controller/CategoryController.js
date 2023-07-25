@@ -80,7 +80,7 @@ const CategoryController = {
             const type = req.payload.type;
 
             if (type !== "admin") {
-                return res.status(403).json({ status: 403, message: "You not admin" });
+                return res.status(403).json({ status: 403, message: "You are not authorized to access this" });
             }
 
             let result = await deleteCategoryById(parseInt(id));
@@ -106,7 +106,7 @@ const CategoryController = {
             const type = req.payload.type;
 
             if (type !== "admin") {
-                return res.status(403).json({ status: 403, message: "You not admin" });
+                return res.status(403).json({ status: 403, message: "You are not authorized to access this" });
             }
 
             let data = {
@@ -136,7 +136,7 @@ const CategoryController = {
             const type = req.payload.type;
 
             if (type !== "admin") {
-                return res.status(403).json({ status: 403, message: "You not admin" });
+                return res.status(403).json({ status: 403, message: "You are not authorized to access this" });
             }
 
             let dataCategoryId = await getCategoryById(parseInt(id));

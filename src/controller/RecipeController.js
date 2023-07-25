@@ -1,4 +1,6 @@
 const xss = require("xss");
+const cloudinary = require("../config/cloud");
+const multer = require("multer");
 const { getRecipe, getRecipeById, deleteById, postRecipe, putRecipe, getRecipeAll, getRecipeCount } = require("../model/RecipeModel");
 
 const RecipeController = {
@@ -97,7 +99,7 @@ const RecipeController = {
             console.log(users_id);
             console.log(dataRecipeId.rows[0].users_id);
             if (users_id !== dataRecipeId.rows[0].users_id && type !== "admin") {
-                return res.status(403).json({ status: 403, message: "Recipe does not belong to you" });
+                return res.status(403).json({ status: 403, message: "You are not authorized to access this, except admin." });
             }
 
             const result = await deleteById(parseInt(id));
@@ -116,33 +118,31 @@ const RecipeController = {
         try {
             const { title, ingredients, category_id } = req.body;
 
-            console.log("post data ");
+            console.log("post data");
             console.log(title, ingredients, category_id);
 
-            if (!title || !ingredients || !category_id) {
-                return res.status(400).json({ status: 400, message: "input title ingredients category_id required" });
+            if (!title || !ingredients || !category_id || !req.file) {
+                return res.status(400).json({ status: 400, message: "Input title, ingredients, and category_id, photo are required" });
             }
 
+            const imageUrl = req.file.path;
             const users_id = req.payload.users_Id;
-            console.log("payload");
-            console.log(req.payload);
 
             const data = {
                 title: xss(title),
                 ingredients: xss(ingredients),
                 category_id: parseInt(category_id),
                 users_id: users_id,
+                photo: imageUrl,
             };
 
-            console.log("data");
-            console.log(data);
             const result = await postRecipe(data);
             console.log(result);
 
-            res.status(200).json({ status: 200, message: "data recipe success", data });
+            res.status(200).json({ status: 200, message: "Data resep berhasil ditambahkan", data });
         } catch (err) {
             console.error(err);
-            res.status(500).json({ status: 500, message: "Internal server error" });
+            res.status(500).json({ status: 500, message: "Terjadi kesalahan pada server" });
         }
     },
     putData: async (req, res, next) => {
@@ -156,6 +156,7 @@ const RecipeController = {
 
             const dataRecipeId = await getRecipeById(parseInt(id));
 
+            const imageUrl = req.file ? req.file.path : dataRecipeId.rows[0].photo;
             const users_id = req.payload.users_Id;
             const type = req.payload.type;
 
@@ -163,7 +164,7 @@ const RecipeController = {
             console.log(users_id);
             console.log(dataRecipeId.rows[0].users_id);
             if (users_id !== dataRecipeId.rows[0].users_id && type !== "admin") {
-                return res.status(403).json({ status: 403, message: "Recipe does not belong to you" });
+                return res.status(403).json({ status: 403, message: "You are not authorized to access this, except admin." });
             }
 
             console.log("put data");
@@ -173,6 +174,7 @@ const RecipeController = {
                 title: xss(title) || dataRecipeId.rows[0].title,
                 ingredients: xss(ingredients) || dataRecipeId.rows[0].ingredients,
                 category_id: parseInt(category_id) || dataRecipeId.rows[0].category_id,
+                photo: imageUrl || dataRecipeId.rows[0].photo,
             };
 
             const result = await putRecipe(data, id);
@@ -189,30 +191,3 @@ const RecipeController = {
 };
 
 module.exports = RecipeController;
-
-// postData: async (req, res, next) => {
-//     try {
-//         const { title, ingredients, category_id, users_id } = req.body;
-//         console.log("post data ");
-//         console.log(title, ingredients, category_id, users_id);
-
-//         if (!title || !ingredients || !category_id || !users_id) {
-//             return res.status(400).json({ status: 400, message: "input title ingredients category_id users_id arequired" });
-//         }
-//         let data = {
-//             title: title,
-//             ingredients: ingredients,
-//             category_id: parseInt(category_id),
-//             users_id: parseInt(users_id),
-//         };
-
-//         console.log("data");
-//         console.log(data);
-//         let result = postRecipe(data);
-//         console.log(result);
-
-//         return res.status(200).json({ status: 200, message: "data recipe success", data });
-//     } catch (err) {
-//         res.status(500).json({ status: 500, message: "Internal server error" });
-//     }
-// },

@@ -13,7 +13,7 @@ const UsersController = {
             const type = req.payload.type;
 
             if (type !== "admin") {
-                return res.status(403).json({ status: 403, message: "You not admin" });
+                return res.status(403).json({ status: 403, message: "You are not authorized to access this" });
             }
 
             const { search, searchBy, sort, limit } = req.query;
@@ -54,7 +54,7 @@ const UsersController = {
             const type = req.payload.type;
 
             if (type !== "admin") {
-                return res.status(403).json({ status: 403, message: "You not admin" });
+                return res.status(403).json({ status: 403, message: "You are not authorized to access this" });
             }
             const dataUsers = await getUsersAll();
             console.log("dataUsers");
@@ -76,7 +76,7 @@ const UsersController = {
             const type = req.payload.type;
 
             if (type !== "admin") {
-                return res.status(403).json({ status: 403, message: "You not admin" });
+                return res.status(403).json({ status: 403, message: "You are not authorized to access this" });
             }
 
             const dataUsersId = await getUsersById(parseInt(id));
@@ -102,17 +102,17 @@ const UsersController = {
                 return res.status(404).json({ message: "id wrong" });
             }
 
-            // const dataUsersId = await getUsersById(parseInt(id));
+            const dataUsersId = await getUsersById(parseInt(id));
 
-            // const users_id = req.payload.users_Id;
-            // const type = req.payload.type;
+            const users_id = req.payload.users_Id;
+            const type = req.payload.type;
 
-            // console.log("id data");
-            // console.log(users_id);
-            // console.log(dataUsersId.rows[0].users_id);
-            // if (users_id !== dataUsersId.rows[0].users_id && type !== "admin") {
-            //     return res.status(403).json({ status: 403, message: "Recipe does not belong to you" });
-            // }
+            console.log("id data");
+            console.log(users_id);
+            console.log(dataUsersId.rows[0].users_id);
+            if (users_id !== dataUsersId.rows[0].users_id && type !== "admin") {
+                return res.status(403).json({ status: 403, message: "Recipe does not belong to you" });
+            }
 
             const result = await deleteUsersById(parseInt(id));
             console.log(result);
@@ -141,7 +141,12 @@ const UsersController = {
 
             const isUsernameAvailable = await checkUsernameAvailability(username);
             if (!isUsernameAvailable) {
-                return res.status(502).json({ message: "Username telah ditemukan, harap login atau gunakan username lain" });
+                return res.status(502).json({ message: "Username already exists, login or enter another username" });
+            }
+
+            const isEmailAvailable = await checkEmailAvailability(email);
+            if (!isEmailAvailable) {
+                return res.status(502).json({ message: "Email already exists, login or enter another email" });
             }
 
             const hashedPassword = await hash(password);
@@ -184,7 +189,7 @@ const UsersController = {
             console.log(users_id);
             console.log(dataUsersId.rows[0].users_id);
             if (users_id !== dataUsersId.rows[0].users_id && type !== "admin") {
-                return res.status(403).json({ status: 403, message: "Recipe does not belong to you" });
+                return res.status(403).json({ status: 403, message: "You can't access data that doesn't belong to you, except admin." });
             }
 
             console.log("put data");
@@ -197,7 +202,6 @@ const UsersController = {
                 id,
             };
 
-            // Hash password baru jika ada
             if (password) {
                 data.password = await hash(password);
             }

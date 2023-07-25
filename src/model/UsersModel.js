@@ -46,11 +46,12 @@ const getUsersCount = async (data) => {
 };
 
 const postUsers = async (data) => {
-    const { username, password, email } = data;
+    const { type, username, password, email } = data;
     console.log("model postUsers");
     try {
-        const queryString = "INSERT INTO users(username, password, email) VALUES($1, $2, $3)";
-        const values = [username, password, email];
+        const queryString = `INSERT INTO users(type, username, password, email) 
+        VALUES($1, $2, $3, $4)`;
+        const values = [type, username, password, email];
 
         const result = await Pool.query(queryString, values);
         return result;
@@ -118,6 +119,18 @@ const getLogin = async (data) => {
     }
 };
 
+const checkUsernameAvailability = async (username) => {
+    try {
+        const queryString = "SELECT * FROM users WHERE username = $1";
+        const values = [username];
+        const result = await Pool.query(queryString, values);
+        return result.rows.length === 0;
+    } catch (err) {
+        console.error(err);
+        throw err;
+    }
+};
+
 module.exports = {
     getUsers,
     getUsersAll,
@@ -127,4 +140,5 @@ module.exports = {
     postUsers,
     putUsers,
     getLogin,
+    checkUsernameAvailability,
 };

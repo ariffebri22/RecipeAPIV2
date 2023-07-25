@@ -1,11 +1,12 @@
 const Pool = require("../config/db");
-const { getUsers, getUsersAll, getUsersCount, getUsersById, deleteUsersById, postUsers, putUsers, getLogin } = require("../model/UsersModel");
+const { getUsers, getUsersAll, getUsersCount, getUsersById, deleteUsersById, postUsers, putUsers, getLogin, checkUsernameAvailability } = require("../model/UsersModel");
 const { hash, verify } = require("../helper/passwordHash");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const argon2 = require("argon2");
+const { GenerateToken } = require("../helper/generateToken");
 
-const secretKey = process.env.SECRET_KEY || "mySecretKey";
+const secretKey = process.env.SECRET_KEY;
 
 const UsersController = {
     getDataDetail: async (req, res, next) => {
@@ -98,20 +99,28 @@ const UsersController = {
             res.status(500).json({ status: 500, message: err.message });
         }
     },
+
     postData: async (req, res, next) => {
         try {
-            const { username, password, email } = req.body;
-            console.log("post data ");
-            console.log(username, password, email);
+            const { type, username, password, email } = req.body;
 
-            if (!username || !password || !email) {
-                return res.status(400).json({ status: 400, message: "input username password email required" });
+            console.log("post data");
+            console.log(type, username, password, email);
+
+            if (!type || !username || !password || !email) {
+                return res.status(400).json({ status: 400, message: "input type, username, password, email required" });
+            }
+
+            const isUsernameAvailable = await checkUsernameAvailability(username);
+            if (!isUsernameAvailable) {
+                return res.status(502).json({ message: "Username telah ditemukan, harap login atau gunakan username lain" });
             }
 
             const hashedPassword = await hash(password);
 
             console.log("data");
             const data = {
+                type: type,
                 username: username,
                 password: hashedPassword,
                 email: email,
@@ -120,15 +129,15 @@ const UsersController = {
             console.log(data);
             const result = await postUsers(data);
             console.log(result);
+            // const token = jwt.sign({ username: username }, secretKey, { expiresIn: "1m" });
 
-            const token = jwt.sign({ username: username }, secretKey);
-
-            res.status(200).json({ status: 200, message: "data users success", data, token });
+            res.status(200).json({ status: 200, say: `Hello ${username}!`, message: "Registration success", data });
         } catch (err) {
             console.error(err);
             res.status(500).json({ status: 500, message: "Internal server error" });
         }
     },
+
     putData: async (req, res, next) => {
         try {
             const { id } = req.params;
@@ -184,7 +193,7 @@ const UsersController = {
                 if (typeof storedPassword === "string" && typeof password === "string") {
                     const isPasswordValid = await verify(storedPassword, password);
                     if (isPasswordValid) {
-                        const token = jwt.sign({ username: username, userId: dataUsers.rows[0].id }, secretKey);
+                        const token = jwt.sign({ username: username, users_Id: dataUsers.rows[0].id }, secretKey);
 
                         return res.status(200).json({ status: 200, message: `Login successful`, say: `Hallo ${username}!`, token });
                     } else {

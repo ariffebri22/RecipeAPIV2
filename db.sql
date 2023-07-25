@@ -1,22 +1,26 @@
+CREATE SEQUENCE custom_id_sequence START WITH (SELECT COALESCE(MAX(id)+1, 1) FROM users);
 
-CREATE TABLE
-    recipe(
-        id SERIAL,
-        title VARCHAR NOT NULL,
-        ingredients TEXT NOT NULL,
-        category_id INT NOT NULL,
-        photo VARCHAR NOT NULL
-    );
+CREATE TABLE recipe (
+    id BIGSERIAL PRIMARY KEY,
+    title VARCHAR NOT NULL,
+    ingredients TEXT NOT NULL,
+    category_id INT NOT NULL,
+    photo VARCHAR NOT NULL,
+    users_id INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 
 CREATE TABLE 
     category (
-    id SERIAL,
+    id SERIAL PRIMARY KEY,
     name VARCHAR NOT NULL,
     description TEXT
 );
 
 CREATE TABLE users (
-    id SERIAL,
+    id SERIAL PRIMARY KEY,
+    type VARCHAR NOT NULL,
     username VARCHAR NOT NULL,
     password VARCHAR NOT NULL,
     email VARCHAR NOT NULL,
@@ -25,7 +29,7 @@ CREATE TABLE users (
 
 ALTER TABLE recipe DROP COLUMN category;
 
-ALTER TABLE recipe ADD COLUMN category_id INT;
+ALTER TABLE users ADD COLUMN category_id INT;
 
 UPDATE recipe SET category_id=1 WHERE photo='https://placehold.co/600x400';
 
@@ -33,8 +37,10 @@ ALTER TABLE recipe ALTER COLUMN category_id SET NOT NULL;
 
 ALTER TABLE recipe ADD FOREIGN KEY (category_id) REFERENCES category(id);
 
+ALTER TABLE recipe ADD FOREIGN KEY (users_id) REFERENCES users(id);
 
-SELECT * FROM category;
+
+SELECT * FROM recipe;
 
 ALTER TABLE category ADD CONSTRAINT id UNIQUE (id);
 
@@ -42,7 +48,7 @@ DELETE FROM recipe WHERE category_id=1;
 
 INSERT INTO recipe(title,ingredients,category_id,photo) VALUES('Spring Rolls','Kulit lumpia, kol, wortel, tauge, udang cincang, daging ayam cincang, daun bawang, saus soya, saus oyster, minyak wijen, dan bumbu lainnya.','1','https://placehold.co/600x400');
 
-DROP TABLE category;
+DROP TABLE recipe;
 
 ALTER TABLE recipe DROP CONSTRAINT category_id;
 
@@ -54,3 +60,9 @@ SELECT recipe.id, recipe.title, recipe.ingredients, recipe.photo, category.name 
 SELECT * FROM category WHERE name ILIKE '%Main%';
 
 DROP TABLE users;
+
+SELECT re.id, re.title, re.ingredients, re.photo, cat.name AS category, us.username AS creator
+FROM recipe re
+JOIN category cat ON re.category_id = cat.id
+JOIN users us ON re.users_id = us.id
+ORDER BY re.id;

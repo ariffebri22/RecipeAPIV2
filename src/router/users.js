@@ -1,6 +1,6 @@
-const { getData, getDataById, deleteDataById, postData, putData, getDataDetail, login } = require("../controller/UsersController");
 const express = require("express");
 const router = express.Router();
+const { getData, getDataById, deleteDataById, postData, putData, getDataDetail, login } = require("../controller/UsersController");
 
 router.get("/", getData);
 router.get("/detail", getDataDetail);

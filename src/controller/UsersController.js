@@ -262,7 +262,7 @@ const UsersController = {
                             }
                         });
 
-                        return res.status(200).json({ status: 200, message: `Login successful`, say: `Hallo ${username}!`, token: `Please check your email for get token` });
+                        return res.status(200).json({ status: 200, message: `Login successful`, say: `Hallo ${username}!, Please check your email for get token`, token });
                     } else {
                         return res.status(401).json({ status: 401, message: "Invalid password" });
                     }

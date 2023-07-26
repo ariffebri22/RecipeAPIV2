@@ -12,6 +12,16 @@
 				{
 					"name": "Recipe SELECT",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIxIiwidXNlcnNfSWQiOjE5LCJ0eXBlIjoidXNlciIsImlhdCI6MTY5MDI1MDk3NH0.ijHORo7nFFTF5kxN-3Q7I39HBbQlnCxsDyyZK9yyxaI",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -47,28 +57,41 @@
 				{
 					"name": "Recipe INSERT",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIyIiwidXNlcnNfSWQiOjIyLCJ0eXBlIjoidXNlciIsImlhdCI6MTY5MDI3OTU2NH0.MWtJRD0HTkgJwm-b9CBM-V97_e9zNMELEgw0r-dcs7s",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [],
 						"body": {
-							"mode": "urlencoded",
-							"urlencoded": [
+							"mode": "formdata",
+							"formdata": [
 								{
 									"key": "title",
-									"value": "Qurban Steak",
-									"type": "text",
-									"disabled": true
+									"value": "Fruit Trifle",
+									"type": "text"
 								},
 								{
 									"key": "ingredients",
-									"value": "Potongan daging sapi yang didapatkan dari hasil qurban lalu di grill, namun saya tidak menyarankan nya.",
-									"type": "text",
-									"disabled": true
+									"value": "Lapisan sponge cake, buah segar (seperti stroberi, blueberry, dan kiwi), dan krim vanilla yang dipadu menjadi trifle cantik. Ditaburi dengan cokelat parut dan mint segar sebagai hiasan.",
+									"type": "text"
 								},
 								{
 									"key": "category_id",
-									"value": "2",
-									"type": "text",
-									"disabled": true
+									"value": "3",
+									"description": "1 | 2 | 3",
+									"type": "text"
+								},
+								{
+									"key": "photo",
+									"type": "file",
+									"src": "/C:/Users/muham/Downloads/english-trifle-15.jpg"
 								}
 							]
 						},
@@ -80,6 +103,33 @@
 							"port": "{{port}}",
 							"path": [
 								"recipe"
+							],
+							"query": [
+								{
+									"key": "title",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "ingredients",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "category_id",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "photo",
+									"value": null,
+									"disabled": true
+								},
+								{
+									"key": "creator",
+									"value": "2",
+									"disabled": true
+								}
 							]
 						}
 					},
@@ -91,37 +141,35 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{url}}:{{port}}/recipe/detail",
+							"raw": "{{url}}:{{port}}/recipe/detail/?search=b&page=1&sort=desc",
 							"host": [
 								"{{url}}"
 							],
 							"port": "{{port}}",
 							"path": [
 								"recipe",
-								"detail"
+								"detail",
+								""
 							],
 							"query": [
 								{
 									"key": "search",
-									"value": "steak",
-									"disabled": true
+									"value": "b"
 								},
 								{
 									"key": "page",
-									"value": "2",
-									"disabled": true
+									"value": "1"
 								},
 								{
 									"key": "searchBy",
 									"value": "title",
-									"description": "Main course",
+									"description": "title | ingredients",
 									"disabled": true
 								},
 								{
 									"key": "sort",
 									"value": "desc",
-									"description": "asc / desc",
-									"disabled": true
+									"description": "asc / desc"
 								}
 							]
 						}
@@ -131,6 +179,16 @@
 				{
 					"name": "Recipe DELETE",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluMSIsInVzZXJzX0lkIjoyNSwidHlwZSI6ImFkbWluIiwiaWF0IjoxNjkwMjg1MDg1fQ.ADyKbV7d_waaYZDtsa0ifMzz7OfMbGRaD_UGLrUNEGg",
+									"type": "string"
+								}
+							]
+						},
 						"method": "DELETE",
 						"header": [],
 						"body": {
@@ -150,7 +208,7 @@
 							"variable": [
 								{
 									"key": "id",
-									"value": "15"
+									"value": "30"
 								}
 							]
 						}
@@ -160,20 +218,29 @@
 				{
 					"name": "Recipe UPDATE",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluMSIsInVzZXJzX0lkIjoyNSwidHlwZSI6ImFkbWluIiwiaWF0IjoxNjkwMjg1MDg1fQ.ADyKbV7d_waaYZDtsa0ifMzz7OfMbGRaD_UGLrUNEGg",
+									"type": "string"
+								}
+							]
+						},
 						"method": "PUT",
 						"header": [],
 						"body": {
-							"mode": "urlencoded",
-							"urlencoded": [
+							"mode": "formdata",
+							"formdata": [
 								{
 									"key": "title",
-									"value": "Daging Qurban",
-									"type": "text",
-									"disabled": true
+									"value": "Buahenol",
+									"type": "text"
 								},
 								{
 									"key": "ingredients",
-									"value": "Daging sapi ribeye (bagian tulang rusuk), garam, lada hitam, minyak zaitun.",
+									"value": "",
 									"type": "text",
 									"disabled": true
 								}
@@ -192,7 +259,7 @@
 							"variable": [
 								{
 									"key": "id",
-									"value": "15"
+									"value": "31"
 								}
 							]
 						}
@@ -225,6 +292,16 @@
 				{
 					"name": "Category INSERT",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIyIiwidXNlcnNfSWQiOjIxLCJ0eXBlIjoidXNlciIsImlhdCI6MTY5MDI1MTM3OX0.YY6heXr-5rJbWdCGPFIVYKpFXyR0AC1uHDFr1CmD1rw",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [],
 						"body": {
@@ -232,15 +309,13 @@
 							"urlencoded": [
 								{
 									"key": "name",
-									"value": "Nyarap",
-									"type": "text",
-									"disabled": true
+									"value": "Drink",
+									"type": "text"
 								},
 								{
 									"key": "description",
-									"value": "Nyarap adalah hidangan pembuka setelah bangun tidur sebelum memulai aktifitas.",
-									"type": "text",
-									"disabled": true
+									"value": "Minuman adalah cairan yang dimaksudkan untuk dikonsumsi manusia. Selain fungsi dasar mereka untuk memuaskan dahaga, minuman memainkan peran penting dalam budaya manusia.",
+									"type": "text"
 								}
 							]
 						},
@@ -303,6 +378,16 @@
 				{
 					"name": "Category DELETE",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIyIiwidXNlcnNfSWQiOjIxLCJ0eXBlIjoidXNlciIsImlhdCI6MTY5MDI1MTM3OX0.YY6heXr-5rJbWdCGPFIVYKpFXyR0AC1uHDFr1CmD1rw",
+									"type": "string"
+								}
+							]
+						},
 						"method": "DELETE",
 						"header": [],
 						"body": {
@@ -383,6 +468,16 @@
 				{
 					"name": "Users SELECT",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFyaWYiLCJ1c2Vyc19JZCI6MiwidHlwZSI6ImFkbWluIiwiaWF0IjoxNjkwMjUzNjc0fQ.Zi-TuRrDso0dTWxrg6a14Xjoo3rhC_XNdJcpe3JKMs4",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -442,11 +537,110 @@
 					"response": []
 				},
 				{
-					"name": "Users SELECT LOGIN",
+					"name": "Users UPDATE",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "username",
+									"value": "user12345",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "user12345",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}:{{port}}/users/:id",
+							"host": [
+								"{{url}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"users",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Users DELETE",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFyaWYiLCJ1c2Vyc19JZCI6MiwidHlwZSI6ImFkbWluIiwiaWF0IjoxNjkwMjcyMjg2fQ.Az2tTxNeq3Molc2fZoTSdFqy6Tb24x-qg0qbjwztIpw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n        \"title\": \"Blackforest\",\r\n        \"ingredients\": \"Mentega, Terigu, Gula, Coklat\",\r\n        \"category\": \"Desert\",\r\n        \"photo\": \"123\"\r\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}:{{port}}/users/:id",
+							"host": [
+								"{{url}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"users",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "21"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Start",
+			"item": [
+				{
+					"name": "Users LOGIN",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluMiIsImlhdCI6MTY5MDEwNDcyMywiZXhwIjoxNjkwMTA0NzgzfQ.8jLduxjDXjHPVrH5wJsX0IeV-EyG2c9h8b_FvFVwSkg",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"body": {
@@ -454,12 +648,12 @@
 							"urlencoded": [
 								{
 									"key": "username",
-									"value": "admin",
+									"value": "admin1",
 									"type": "text"
 								},
 								{
 									"key": "password",
-									"value": "admin",
+									"value": "admin1",
 									"type": "text"
 								}
 							]
@@ -491,26 +685,35 @@
 					"response": []
 				},
 				{
-					"name": "Users INSERT",
+					"name": "Users REGISTER",
 					"request": {
+						"auth": {
+							"type": "noauth"
+						},
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "urlencoded",
 							"urlencoded": [
 								{
+									"key": "type",
+									"value": "admin",
+									"description": "admin | user",
+									"type": "text"
+								},
+								{
 									"key": "username",
-									"value": "user1",
+									"value": "admin1",
 									"type": "text"
 								},
 								{
 									"key": "password",
-									"value": "user1",
+									"value": "admin1",
 									"type": "text"
 								},
 								{
 									"key": "email",
-									"value": "user1@gmail.com",
+									"value": "gov77538@nezid.com",
 									"type": "text"
 								}
 							]
@@ -523,81 +726,6 @@
 							"port": "{{port}}",
 							"path": [
 								"users"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Users UPDATE",
-					"request": {
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "urlencoded",
-							"urlencoded": [
-								{
-									"key": "username",
-									"value": "user3",
-									"type": "text"
-								},
-								{
-									"key": "password",
-									"value": "aing081",
-									"type": "text",
-									"disabled": true
-								}
-							]
-						},
-						"url": {
-							"raw": "{{url}}:{{port}}/users/:id",
-							"host": [
-								"{{url}}"
-							],
-							"port": "{{port}}",
-							"path": [
-								"users",
-								":id"
-							],
-							"variable": [
-								{
-									"key": "id",
-									"value": "9"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Users DELETE",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n        \"title\": \"Blackforest\",\r\n        \"ingredients\": \"Mentega, Terigu, Gula, Coklat\",\r\n        \"category\": \"Desert\",\r\n        \"photo\": \"123\"\r\n    }",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{url}}:{{port}}/users/:id",
-							"host": [
-								"{{url}}"
-							],
-							"port": "{{port}}",
-							"path": [
-								"users",
-								":id"
-							],
-							"variable": [
-								{
-									"key": "id",
-									"value": "10"
-								}
 							]
 						}
 					},

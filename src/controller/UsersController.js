@@ -229,13 +229,13 @@ const UsersController = {
 
     login: async (req, res, next) => {
         try {
-            const { username, password } = req.body;
+            const { email, password } = req.body;
 
-            if (!username || !password) {
-                return res.status(400).json({ status: 400, message: "input username and password required" });
+            if (!email || !password) {
+                return res.status(400).json({ status: 400, message: "input email and password required" });
             }
 
-            const dataUsers = await getLogin({ username });
+            const dataUsers = await getLogin({ email });
 
             if (dataUsers && dataUsers.rows.length > 0) {
                 const storedPassword = dataUsers.rows[0].password;
@@ -244,13 +244,13 @@ const UsersController = {
                 if (typeof storedPassword === "string" && typeof password === "string") {
                     const isPasswordValid = await verify(storedPassword, password);
                     if (isPasswordValid) {
-                        const token = jwt.sign({ username: username, users_Id: dataUsers.rows[0].id, type: dataUsers.rows[0].type }, secretKey);
+                        const token = jwt.sign({ email: email, users_Id: dataUsers.rows[0].id, type: dataUsers.rows[0].type, username: dataUsers.rows[0].username }, secretKey);
 
                         const mailOptions = {
                             from: process.env.EMAIL, // Alamat email pengirim
                             to: dataUsers.rows[0].email, // Alamat email penerima
                             subject: "Verify your Account", // Subjek email
-                            text: `Halo ${username}, please verify your account with this token : ${token}`, // Isi email dalam plain text
+                            text: `Halo ${dataUsers.rows[0].username}, please verify your account with this token : ${token}`, // Isi email dalam plain text
                             html: "<b>Halo,</b><br><p>please verify your account.</p>", // Isi email dalam format HTML
                         };
 
@@ -262,7 +262,7 @@ const UsersController = {
                             }
                         });
 
-                        return res.status(200).json({ status: 200, message: `Login successful`, say: `Hallo ${username}!, Please check your email for get token`, token });
+                        return res.status(200).json({ status: 200, message: `Login successful`, say: `Hallo ${dataUsers.rows[0].username}!, Please check your email for get token`, token });
                     } else {
                         return res.status(401).json({ status: 401, message: "Invalid password" });
                     }

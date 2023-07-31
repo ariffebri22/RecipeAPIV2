@@ -105,11 +105,11 @@ const deleteUsersById = async (id) => {
 };
 
 const getLogin = async (data) => {
-    const { username } = data;
+    const { email } = data;
     console.log("model getLogin");
     try {
-        const queryString = "SELECT * FROM users WHERE username=$1";
-        const values = [username];
+        const queryString = "SELECT * FROM users WHERE email=$1";
+        const values = [email];
 
         const result = await Pool.query(queryString, values);
         return result;

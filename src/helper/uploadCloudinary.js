@@ -1,14 +1,22 @@
 const cloudinary = require("../config/cloud");
 const multer = require("multer");
 const { CloudinaryStorage } = require("multer-storage-cloudinary");
+const path = require("path");
 
-const storage = new CloudinaryStorage({
-    cloudinary: cloudinary,
-    params: {
-        folder: "RecipeAPIV2",
-        allowed_formats: ["jpg", "png", "jpeg"],
+// const storage = new CloudinaryStorage({
+//     cloudinary: cloudinary,
+//     params: {
+//         folder: "RecipeAPIV2",
+//         allowed_formats: ["jpg", "png", "jpeg"],
+//     },
+// });
+
+const storage = multer.diskStorage({
+    filename: function (req, file, cb) {
+        cb(null, Date.now() + path.extname(file.originalname));
     },
 });
+
 const fileFilter = (req, file, cb) => {
     if (file.mimetype === "image/jpg" || file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
         cb(null, true);

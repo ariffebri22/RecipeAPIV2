@@ -29,7 +29,7 @@ CREATE TABLE users (
 
 ALTER TABLE recipe DROP COLUMN category;
 
-ALTER TABLE users ADD COLUMN category_id INT;
+ALTER TABLE recipe ADD COLUMN public_id VARCHAR;
 
 UPDATE recipe SET category_id=1 WHERE photo='https://placehold.co/600x400';
 
@@ -60,6 +60,8 @@ SELECT recipe.id, recipe.title, recipe.ingredients, recipe.photo, category.name 
 SELECT * FROM category WHERE name ILIKE '%Main%';
 
 DROP TABLE users;
+
+DELETE FROM recipe WHERE id=22;
 
 SELECT re.id, re.title, re.ingredients, re.photo, cat.name AS category, us.username AS creator
 FROM recipe re

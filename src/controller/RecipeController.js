@@ -1,5 +1,6 @@
 const xss = require("xss");
 const { getRecipe, getRecipeById, deleteById, postRecipe, putRecipe, getRecipeAll, getRecipeCount } = require("../model/RecipeModel");
+const cloudinary = require("cloudinary").v2;
 
 const RecipeController = {
     getDataDetail: async (req, res, next) => {
@@ -100,6 +101,7 @@ const RecipeController = {
                 return res.status(403).json({ status: 403, message: "You are not authorized to access this, except admin." });
             }
 
+            await cloudinary.uploader.destroy(dataRecipeId.rows[0].public_id);
             const result = await deleteById(parseInt(id));
             console.log(result);
             if (result.rowCount === 0) {
@@ -115,27 +117,33 @@ const RecipeController = {
     postData: async (req, res, next) => {
         try {
             const { title, ingredients, category_id } = req.body;
+            const photo = req.file;
 
             console.log("post data");
             console.log(title, ingredients, category_id);
 
-            if (!title || !ingredients || !category_id || !req.file) {
-                return res.status(400).json({ status: 400, message: "Input title, ingredients, and category_id, photo are required" });
+            if (!title || !ingredients || !category_id) {
+                return res.status(400).json({ status: 400, message: "Input title, ingredients, and category_id are required" });
             }
 
-            const imageUrl = req.file.path;
-            const users_id = req.payload.users_Id;
+            const resultt = await cloudinary.uploader.upload(photo.path, {
+                use_filename: true,
+                folder: "RecipeAPIV2",
+            });
 
-            const data = {
+            let data = {
                 title: xss(title),
                 ingredients: xss(ingredients),
                 category_id: parseInt(category_id),
-                users_id: users_id,
-                photo: imageUrl,
+                users_id: req.payload.users_Id,
+                photo: resultt.secure_url,
+                public_id: resultt.public_id,
             };
 
             const result = await postRecipe(data);
             console.log(result);
+
+            delete data.id;
 
             res.status(200).json({ status: 200, message: "Data resep berhasil ditambahkan", data });
         } catch (err) {
@@ -143,6 +151,7 @@ const RecipeController = {
             res.status(500).json({ status: 500, message: "Terjadi kesalahan pada server" });
         }
     },
+
     putData: async (req, res, next) => {
         try {
             const { id } = req.params;
@@ -154,7 +163,6 @@ const RecipeController = {
 
             const dataRecipeId = await getRecipeById(parseInt(id));
 
-            // const imageUrl = req.file.path;
             const users_id = req.payload.users_Id;
             const type = req.payload.type;
 
@@ -172,8 +180,24 @@ const RecipeController = {
                 title: xss(title) || dataRecipeId.rows[0].title,
                 ingredients: xss(ingredients) || dataRecipeId.rows[0].ingredients,
                 category_id: parseInt(category_id) || dataRecipeId.rows[0].category_id,
-                // photo: imageUrl || dataRecipeId.rows[0].photo,
+                photo: dataRecipeId.rows[0].photo,
+                public_id: dataRecipeId.rows[0].public_id,
             };
+
+            if (req.file) {
+                const resultt = await cloudinary.uploader.upload(req.file.path, {
+                    use_filename: true,
+                    folder: "RecipeAPIV2",
+                });
+
+                // Hapus gambar lama dari Cloudinary jika ada
+                if (dataRecipeId.rows[0].public_id) {
+                    await cloudinary.uploader.destroy(dataRecipeId.rows[0].public_id);
+                }
+
+                data.photo = resultt.secure_url;
+                data.public_id = resultt.public_id;
+            }
 
             const result = await putRecipe(data, id);
             console.log(result);

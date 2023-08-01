@@ -13,20 +13,23 @@ const path = require("path");
 
 const storage = multer.diskStorage({
     filename: function (req, file, cb) {
-        cb(null, Date.now() + path.extname(file.originalname));
+        const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+        cb(null, file.fieldname + "-" + uniqueSuffix + ".png");
     },
 });
 
 const fileFilter = (req, file, cb) => {
-    if (file.mimetype === "image/jpg" || file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
+    // Check if the file size is less than or equal to 5MB (5 * 1024 * 1024 bytes)
+    if (file.mimetype === "image/png" || file.mimetype === "image/jpg" || file.mimetype === "image/jpeg" || (file.mimetype === "image.jfif" && file.size <= 5 * 1024 * 1024)) {
         cb(null, true);
+        req.isFileValid = true;
     } else {
-        const error = new Error("Unsupported file type");
-        error.status = 400;
-        cb(error, false);
+        req.isFileValid = false;
+        req.isFileValidMessage = "Files must be jpg, jpeg, png, and jfif, and should not exceed 5MB in size.";
+        cb(null, false);
     }
 };
-const maxSize = 2.5 * 1024 * 1024;
-const upload = multer({ storage: storage, fileFilter: fileFilter, limits: { fileSize: maxSize } });
+
+const upload = multer({ storage: storage, fileFilter: fileFilter });
 
 module.exports = upload;

@@ -1,6 +1,6 @@
 const xss = require("xss");
 const { getRecipe, getRecipeById, deleteById, postRecipe, putRecipe, getRecipeAll, getRecipeCount } = require("../model/RecipeModel");
-const cloudinary = require("cloudinary").v2;
+const cloudinary = require("../config/cloud");
 
 const RecipeController = {
     getDataDetail: async (req, res, next) => {
@@ -122,6 +122,10 @@ const RecipeController = {
             console.log("post data");
             console.log(title, ingredients, category_id);
 
+            if (!req.isFileValid) {
+                return res.status(404).json({ message: req.isFileValidMessage });
+            }
+
             if (!title || !ingredients || !category_id) {
                 return res.status(400).json({ status: 400, message: "Input title, ingredients, and category_id are required" });
             }
@@ -159,6 +163,10 @@ const RecipeController = {
 
             if (!id || id <= 0 || isNaN(id)) {
                 return res.status(400).json({ status: 400, message: "Invalid id" });
+            }
+
+            if (!req.isFileValid) {
+                return res.status(404).json({ message: req.isFileValidMessage });
             }
 
             const dataRecipeId = await getRecipeById(parseInt(id));

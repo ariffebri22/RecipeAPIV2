@@ -5,11 +5,11 @@ const getRecipeAll = async () => {
     console.log("model getRecipe");
     return new Promise((resolve, reject) =>
         Pool.query(
-            `SELECT re.id, re.title, re.ingredients, re.photo, cat.name AS category, us.username AS creator
+            `SELECT re.id, re.title, re.ingredients, re.photo, cat.name AS category, us.username AS creator, re.created_at
             FROM recipe re
             JOIN category cat ON re.category_id = cat.id
             JOIN users us ON re.users_id = us.id
-            ORDER BY re.id;`,
+            ORDER BY re.id DESC;`,
             (err, result) => {
                 if (!err) {
                     resolve(result);
@@ -26,7 +26,7 @@ const getRecipe = async (data) => {
     console.log("model getRecipe", search, searchBy, sort, offset, limit);
     return new Promise((resolve, reject) =>
         Pool.query(
-            `SELECT re.id, re.title, re.ingredients, re.photo, cat.name AS category, us.username AS creator
+            `SELECT re.id, re.title, re.ingredients, re.photo, cat.name AS category, us.username AS creator, re.created_at
             FROM recipe re
             JOIN category cat ON re.category_id = cat.id
             JOIN users us ON re.users_id = us.id

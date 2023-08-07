@@ -29,7 +29,7 @@ CREATE TABLE users (
 
 ALTER TABLE recipe DROP COLUMN category;
 
-ALTER TABLE recipe ADD COLUMN public_id VARCHAR;
+ALTER TABLE users ADD COLUMN public_id VARCHAR;
 
 UPDATE recipe SET category_id=1 WHERE photo='https://placehold.co/600x400';
 

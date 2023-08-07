@@ -5,11 +5,15 @@ const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const argon2 = require("argon2");
 const nodemailer = require("nodemailer");
+const cloudinary = require("../config/cloud");
+const xss = require("xss");
 
 const secretKey = process.env.SECRET_KEY;
 
 const transporter = nodemailer.createTransport({
-    service: "Gmail",
+    service: "smtp.zoho.com",
+    secure: true,
+    port: 465,
     auth: {
         user: process.env.EMAIL, // Ganti dengan alamat email Anda
         pass: process.env.PASS, // Ganti dengan password email Anda
@@ -123,6 +127,7 @@ const UsersController = {
                 return res.status(403).json({ status: 403, message: "Recipe does not belong to you" });
             }
 
+            await cloudinary.uploader.destroy(dataUsersId.rows[0].public_id);
             const result = await deleteUsersById(parseInt(id));
             console.log(result);
 
@@ -140,9 +145,14 @@ const UsersController = {
     postData: async (req, res, next) => {
         try {
             const { type, username, password, email } = req.body;
+            const photo = req.file;
 
             console.log("post data");
             console.log(type, username, password, email);
+
+            if (!req.isFileValid) {
+                return res.status(404).json({ message: req.isFileValidMessage });
+            }
 
             if (!type || !username || !password || !email) {
                 return res.status(400).json({ status: 400, message: "input type, username, password, email required" });
@@ -160,12 +170,19 @@ const UsersController = {
 
             const hashedPassword = await hash(password);
 
+            const resultt = await cloudinary.uploader.upload(photo.path, {
+                use_filename: true,
+                folder: "RecipeAPIV2",
+            });
+
             console.log("data");
             const data = {
-                type: type,
-                username: username,
-                password: hashedPassword,
-                email: email,
+                type: xss(type),
+                username: xss(username),
+                password: xss(hashedPassword),
+                email: xss(email),
+                photo: resultt.secure_url,
+                public_id: resultt.public_id,
             };
 
             console.log(data);
@@ -189,6 +206,10 @@ const UsersController = {
                 return res.status(404).json({ message: "id wrong" });
             }
 
+            if (!req.isFileValid) {
+                return res.status(404).json({ message: req.isFileValidMessage });
+            }
+
             const dataUsersId = await getUsersById(parseInt(id));
 
             const users_id = req.payload.users_Id;
@@ -205,11 +226,28 @@ const UsersController = {
             console.log(dataUsersId.rows[0]);
 
             const data = {
-                username: username || dataUsersId.rows[0].username,
-                password: password || dataUsersId.rows[0].password,
-                email: email || dataUsersId.rows[0].email,
+                username: xss(username) || dataUsersId.rows[0].username,
+                password: xss(password) || dataUsersId.rows[0].password,
+                email: xss(email) || dataUsersId.rows[0].email,
+                photo: dataUsersId.rows[0].photo,
+                public_id: dataUsersId.rows[0].public_id,
                 id,
             };
+
+            if (req.file) {
+                const resultt = await cloudinary.uploader.upload(req.file.path, {
+                    use_filename: true,
+                    folder: "RecipeAPIV2",
+                });
+
+                // Hapus gambar lama dari Cloudinary jika ada
+                if (dataUsersId.rows[0].public_id) {
+                    await cloudinary.uploader.destroy(dataUsersId.rows[0].public_id);
+                }
+
+                data.photo = resultt.secure_url;
+                data.public_id = resultt.public_id;
+            }
 
             if (password) {
                 data.password = await hash(password);
@@ -244,7 +282,7 @@ const UsersController = {
                 if (typeof storedPassword === "string" && typeof password === "string") {
                     const isPasswordValid = await verify(storedPassword, password);
                     if (isPasswordValid) {
-                        const token = jwt.sign({ email: email, users_Id: dataUsers.rows[0].id, type: dataUsers.rows[0].type, username: dataUsers.rows[0].username }, secretKey);
+                        const token = jwt.sign({ email: email, users_Id: dataUsers.rows[0].id, type: dataUsers.rows[0].type, username: dataUsers.rows[0].username, photo: dataUsers.rows[0].photo }, secretKey);
 
                         const mailOptions = {
                             from: process.env.EMAIL, // Alamat email pengirim

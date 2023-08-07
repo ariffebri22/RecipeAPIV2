@@ -46,12 +46,12 @@ const getUsersCount = async (data) => {
 };
 
 const postUsers = async (data) => {
-    const { type, username, password, email } = data;
+    const { type, username, password, email, photo, public_id } = data;
     console.log("model postUsers");
     try {
-        const queryString = `INSERT INTO users(type, username, password, email) 
-        VALUES($1, $2, $3, $4)`;
-        const values = [type, username, password, email];
+        const queryString = `INSERT INTO users(type, username, password, email, photo, public_id) 
+        VALUES($1, $2, $3, $4, $5, $6)`;
+        const values = [type, username, password, email, photo, public_id];
 
         const result = await Pool.query(queryString, values);
         return result;
@@ -62,11 +62,11 @@ const postUsers = async (data) => {
 };
 
 const putUsers = async (data) => {
-    const { id, username, password, email } = data;
+    const { id, username, password, email, photo, public_id } = data;
     console.log("model putUsers");
     try {
-        const queryString = "UPDATE users SET username=$1, password=$2, email=$3 WHERE id=$4";
-        const values = [username, password, email, id];
+        const queryString = "UPDATE users SET username=$1, password=$2, email=$3, photo=$5, public_id=$6 WHERE id=$4";
+        const values = [username, password, email, id, photo, public_id];
 
         const result = await Pool.query(queryString, values);
         return result;

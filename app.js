@@ -9,7 +9,6 @@ const helmet = require("helmet");
 const port = 4000;
 const app = express();
 
-// Middleware untuk mengizinkan CORS
 const corsOptions = {
     origin: "*",
     optionsSuccessStatus: 200,

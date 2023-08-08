@@ -281,7 +281,7 @@ const UsersController = {
                 if (typeof storedPassword === "string" && typeof password === "string") {
                     const isPasswordValid = await verify(storedPassword, password);
                     if (isPasswordValid) {
-                        const token = jwt.sign({ email: email, users_Id: dataUsers.rows[0].id, type: dataUsers.rows[0].type, username: dataUsers.rows[0].username, photo: dataUsers.rows[0].photo }, secretKey, { expiresIn: "24h" });
+                        const token = jwt.sign({ email: email, users_Id: dataUsers.rows[0].id, type: dataUsers.rows[0].type, username: dataUsers.rows[0].username, photo: dataUsers.rows[0].photo }, secretKey);
 
                         const mailOptions = {
                             from: process.env.EMAIL,

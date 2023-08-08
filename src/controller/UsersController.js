@@ -160,12 +160,12 @@ const UsersController = {
 
             const isUsernameAvailable = await checkUsernameAvailability(username);
             if (!isUsernameAvailable) {
-                return res.status(502).json({ message: "Username already exists, login or enter another username" });
+                return res.status(400).json({ message: "Username already exists, login or enter another username" });
             }
 
             const isEmailAvailable = await checkEmailAvailability(email);
             if (!isEmailAvailable) {
-                return res.status(502).json({ message: "Email already exists, login or enter another email" });
+                return res.status(400).json({ message: "Email already exists, login or enter another email" });
             }
 
             const hashedPassword = await hash(password);

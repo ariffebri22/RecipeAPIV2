@@ -40,7 +40,8 @@ ALTER TABLE recipe ADD FOREIGN KEY (category_id) REFERENCES category(id);
 ALTER TABLE recipe ADD FOREIGN KEY (users_id) REFERENCES users(id);
 
 
-SELECT * FROM recipe;
+SELECT * FROM recipe WHERE users_id=20;
+
 
 ALTER TABLE category ADD CONSTRAINT id UNIQUE (id);
 

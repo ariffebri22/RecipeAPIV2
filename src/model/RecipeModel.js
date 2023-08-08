@@ -98,6 +98,19 @@ const getRecipeById = async (id) => {
     );
 };
 
+const getRecipeByUsers = async (id) => {
+    console.log("model recipe by users_id ->", id);
+    return new Promise((resolve, reject) =>
+        Pool.query(`SELECT * FROM recipe WHERE users_id=${id}`, (err, result) => {
+            if (!err) {
+                resolve(result);
+            } else {
+                reject(err);
+            }
+        })
+    );
+};
+
 const deleteById = async (id) => {
     console.log("delete recipe by id ->", id);
     return new Promise((resolve, reject) =>
@@ -114,10 +127,10 @@ const deleteById = async (id) => {
 module.exports = {
     getRecipe,
     getRecipeById,
+    getRecipeByUsers,
     deleteById,
     postRecipe,
     putRecipe,
     getRecipeAll,
     getRecipeCount,
-    // Recipe, // Ekspor model Recipe
 };

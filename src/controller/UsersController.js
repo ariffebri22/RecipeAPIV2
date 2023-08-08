@@ -15,8 +15,8 @@ const transporter = nodemailer.createTransport({
     secure: true,
     port: 465,
     auth: {
-        user: process.env.EMAIL, // Ganti dengan alamat email Anda
-        pass: process.env.PASS, // Ganti dengan password email Anda
+        user: process.env.EMAIL,
+        pass: process.env.PASS,
     },
 });
 
@@ -240,7 +240,6 @@ const UsersController = {
                     folder: "RecipeAPIV2",
                 });
 
-                // Hapus gambar lama dari Cloudinary jika ada
                 if (dataUsersId.rows[0].public_id) {
                     await cloudinary.uploader.destroy(dataUsersId.rows[0].public_id);
                 }
@@ -282,14 +281,14 @@ const UsersController = {
                 if (typeof storedPassword === "string" && typeof password === "string") {
                     const isPasswordValid = await verify(storedPassword, password);
                     if (isPasswordValid) {
-                        const token = jwt.sign({ email: email, users_Id: dataUsers.rows[0].id, type: dataUsers.rows[0].type, username: dataUsers.rows[0].username, photo: dataUsers.rows[0].photo }, secretKey);
+                        const token = jwt.sign({ email: email, users_Id: dataUsers.rows[0].id, type: dataUsers.rows[0].type, username: dataUsers.rows[0].username, photo: dataUsers.rows[0].photo }, secretKey, { expiresIn: "24h" });
 
                         const mailOptions = {
-                            from: process.env.EMAIL, // Alamat email pengirim
-                            to: dataUsers.rows[0].email, // Alamat email penerima
-                            subject: "Verify your Account", // Subjek email
-                            text: `Halo ${dataUsers.rows[0].username}, please verify your account with this token : ${token}`, // Isi email dalam plain text
-                            html: "<b>Halo,</b><br><p>please verify your account.</p>", // Isi email dalam format HTML
+                            from: process.env.EMAIL,
+                            to: dataUsers.rows[0].email,
+                            subject: "Verify your Account",
+                            text: `Halo ${dataUsers.rows[0].username}, please verify your account with this token : ${token}`,
+                            html: "<b>Halo,</b><br><p>please verify your account.</p>",
                         };
 
                         transporter.sendMail(mailOptions, (error, info) => {

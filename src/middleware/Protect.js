@@ -20,7 +20,11 @@ const Protect = async (req, res, next) => {
         try {
             decoded = await jwt.verify(token, secretKey);
         } catch (err) {
-            return res.status(401).json({ status: 401, message: "Unauthorized: Invalid token" });
+            if (err.name === "TokenExpiredError") {
+                return res.status(401).json({ status: 401, message: "Login session expired, please login again" });
+            } else {
+                return res.status(401).json({ status: 401, message: "Unauthorized: Invalid token" });
+            }
         }
 
         if (!decoded) {

@@ -299,7 +299,7 @@ const UsersController = {
                             }
                         });
 
-                        return res.status(200).json({ status: 200, message: `Login successful`, say: `Hallo ${dataUsers.rows[0].username}!, Please check your email for get token`, token });
+                        return res.status(200).json({ status: 200, message: "Login Successfully", token, username: `${dataUsers.rows[0].username}`, photo: `${dataUsers.rows[0].photo}`, email: `${dataUsers.rows[0].email}` });
                     } else {
                         return res.status(401).json({ status: 401, message: "Wrong password" });
                     }

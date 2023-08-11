@@ -6,7 +6,7 @@ const upload = require("../helper/uploadCloudinary");
 
 router.get("/", Protect, getData);
 router.get("/detail", Protect, getDataDetail);
-router.get("/login", login);
+router.post("/login", login);
 router.post("/", upload.single("photo"), postData);
 router.put("/:id", Protect, upload.single("photo"), putData);
 router.get("/:id", Protect, getDataById);

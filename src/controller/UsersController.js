@@ -301,14 +301,14 @@ const UsersController = {
 
                         return res.status(200).json({ status: 200, message: `Login successful`, say: `Hallo ${dataUsers.rows[0].username}!, Please check your email for get token`, token });
                     } else {
-                        return res.status(401).json({ status: 401, message: "Invalid password" });
+                        return res.status(401).json({ status: 401, message: "Wrong password" });
                     }
                 } else {
                     // console.log(storedPassword);
                     return res.status(500).json({ status: 500, message: "Internal server error: Invalid password format" });
                 }
             } else {
-                return res.status(404).json({ status: 404, message: "User not found" });
+                return res.status(404).json({ status: 404, message: "Email not found, please register first" });
             }
         } catch (err) {
             console.error(err.message);

@@ -5,7 +5,7 @@ const getRecipeAll = async () => {
     console.log("model getRecipe");
     return new Promise((resolve, reject) =>
         Pool.query(
-            `SELECT re.id, re.title, re.ingredients, re.photo, cat.name AS category, us.username AS creator, re.created_at
+            `SELECT re.id, re.title, re.ingredients, re.photo, cat.name AS category, us.username AS creator, us.photo AS creator_photo, re.created_at
             FROM recipe re
             JOIN category cat ON re.category_id = cat.id
             JOIN users us ON re.users_id = us.id
